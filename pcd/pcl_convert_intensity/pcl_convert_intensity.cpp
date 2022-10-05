@@ -79,10 +79,12 @@ int main(int argc, char** argv)
 	path_source = GetProgramOptionAsString(argc, argv, "--path_source", "");
 	path_target = GetProgramOptionAsString(argc, argv, "--path_target", "");
 	if(path_source.find(".pcd")==-1 && path_source.find(".ply")==-1){
+		std::cout<<"path_source: "<<path_source<<std::endl;
 		PCL_ERROR("input --path_source  with extension .pcd or .ply\n");
 		return 0;
 	}
 	if(path_target.find(".pcd")==-1 && path_target.find(".ply")==-1){
+		std::cout<<"path_target: "<<path_target<<std::endl;
 		PCL_ERROR("input --path_target  with extension .pcd or .ply\n");
 		return 0;
 	}

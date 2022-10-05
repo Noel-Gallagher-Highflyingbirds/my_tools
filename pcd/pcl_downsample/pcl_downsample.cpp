@@ -15,7 +15,7 @@ int pointcloudread_pcd(std::string& filename, PointCloudT::Ptr& cloud)
 		PCL_ERROR("Couldn't read file test_pcd.pcd\n");
 		return false;
 	}
-	//pcl::io::savePCDFileASCII("point_source/save/output/1127cloud_maoxian_statisticalremoval-k100-4-ASCII.pcd", *cloud_in_tgt);
+	//pcl::io::savePLYFileASCII("point_source/save/output/1127cloud_maoxian_statisticalremoval-k100-4-ASCII.pcd", *cloud_in_tgt);
 
 	std::cout << "Loaded "
 		<< cloud->width * cloud->height
@@ -35,7 +35,7 @@ bool pointcloudread_ply(std::string& filename, PointCloudT::Ptr& cloud)
 		PCL_ERROR("Couldn't read file ply\n");
 		return false;
 	}
-	//pcl::io::savePCDFileASCII("point_source/save/output/1127cloud_maoxian_statisticalremoval-k100-4-ASCII.pcd", *cloud_in_tgt);
+	//pcl::io::savePLYFileASCII("point_source/save/output/1127cloud_maoxian_statisticalremoval-k100-4-ASCII.pcd", *cloud_in_tgt);
 
 	std::cout << "Loaded "
 		<< cloud->width * cloud->height
@@ -95,19 +95,21 @@ int main(int argc,char** argv) {
 	switch (downsample_mode) {
 	case 0:
 		down_sample_voxel(pcd_source, pcd_downsample, voxel_size, false);
-		pcl::io::savePCDFileBinaryCompressed(target_pcd_path, *pcd_downsample);
+		pcl::io::savePCDFileBinary(target_pcd_path, *pcd_downsample);
 		break;
 	case 1:
 		down_sample_voxel(pcd_source, pcd_downsample, voxel_size, true);
-		pcl::io::savePCDFileBinaryCompressed(target_pcd_path, *pcd_downsample);
+		pcl::io::savePCDFileBinary(target_pcd_path, *pcd_downsample);
 		break;
 	case 2:
+		std::cout << "pcd_source size: " << pcd_source->points.size() << std::endl;
 		down_sample_uniform(pcd_source, pcd_downsample, voxel_size);
-		pcl::io::savePCDFileBinaryCompressed(target_pcd_path, *pcd_downsample);
+		std::cout << "pcd_downsample size: " << pcd_downsample->points.size() << std::endl;
+		pcl::io::savePCDFileBinary(target_pcd_path, *pcd_downsample);
 		break;
 	case 3:
 		down_sample_random(pcd_source, pcd_downsample, fix_points);
-		pcl::io::savePCDFileBinaryCompressed(target_pcd_path, *pcd_downsample);
+		pcl::io::savePCDFileBinary(target_pcd_path, *pcd_downsample);
 		break;
 	default:
 		std::cout << "do nothing\n";
