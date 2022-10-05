@@ -39,12 +39,21 @@ std::tuple<std::shared_ptr<geometry::PointCloud>,
            std::shared_ptr<pipelines::registration::Feature>>
 PreprocessPointCloud(const std::string file_name, float voxel_size = 2.0) {
     //从文件读取点云
+    clock_t read_time_s = clock();
+
     auto pcd = open3d::io::CreatePointCloudFromFile(file_name);
     std::cout << "read " << pcd->points_.size() << " points from " << file_name
         << std::endl;
+    clock_t read_time_e = clock();
+    std::cout << "read file costs: " << (double)(read_time_e - read_time_s) / (double)(CLOCKS_PER_SEC) << " s" << std::endl;
+
     if (voxel_downsample) {
         //降采样
+        clock_t voxel_downsample_time_s = clock();
         pcd = pcd->VoxelDownSample(voxel_size);
+        clock_t voxel_downsample_time_e = clock();
+        std::cout << "voxel_downsample costs: " << (double)(voxel_downsample_time_e - voxel_downsample_time_s) / (double)(CLOCKS_PER_SEC) << " s" << std::endl;
+
         std::cout << "voxel_size=" << voxel_size << ", after downsample "
             << pcd->points_.size() << "points left" << endl;
     }
@@ -119,7 +128,7 @@ int main(int argc, char* argv[]) {
     bool visualize = false;
     clock_t start_time = clock();
 
-    utility::SetVerbosityLevel(utility::VerbosityLevel::Debug);
+    //utility::SetVerbosityLevel(utility::VerbosityLevel::Debug);
 
     if (argc < 4 ||
         utility::ProgramOptionExistsAny(argc, argv, { "-h", "--help" })) {
@@ -184,13 +193,18 @@ int main(int argc, char* argv[]) {
     std::shared_ptr<geometry::PointCloud> target_ori(new geometry::PointCloud);
     open3d::io::ReadPointCloud(path_source, *source_ori);
     open3d::io::ReadPointCloud(path_target, *target_ori);
+    clock_t read_file_time = clock();
+    std::cout << "read_file_time costs: " << (double)(read_file_time - start_time) / (double)(CLOCKS_PER_SEC) << " s" << std::endl;
 
+    clock_t pre_proccess_time_s = clock();
     std::tie(source, source_fpfh) = PreprocessPointCloud(path_source, voxel_size);
     std::tie(target, target_fpfh) = PreprocessPointCloud(path_target, voxel_size);
 
+
+
     pipelines::registration::RegistrationResult registration_result;
-    clock_t pre_proccess_time = clock();
-    std::cout << "pre_proccess costs: " << (double)(pre_proccess_time - start_time) / (double)(CLOCKS_PER_SEC) << " s" << std::endl;
+    clock_t pre_proccess_time_e = clock();
+    std::cout << "pre_proccess costs: " << (double)(pre_proccess_time_e - pre_proccess_time_s) / (double)(CLOCKS_PER_SEC) << " s" << std::endl;
 
 
     // Prepare checkers
@@ -228,10 +242,10 @@ int main(int argc, char* argv[]) {
 
 
     clock_t ransac_time = clock();
-    std::cout << "ransac costs: " << (double)(ransac_time - pre_proccess_time) / (double)(CLOCKS_PER_SEC) << " s" << std::endl;
+    std::cout << "ransac costs: " << (double)(ransac_time - pre_proccess_time_e) / (double)(CLOCKS_PER_SEC) << " s" << std::endl;
 
     clock_t total_fpfh_time = clock();
-    std::cout << "total_fpfh_time: " << (double)(total_fpfh_time - start_time) / (double)CLOCKS_PER_SEC << " s" << std::endl;
+    std::cout << "total_fpfh_time: " << (double)(total_fpfh_time - pre_proccess_time_s) / (double)CLOCKS_PER_SEC << " s" << std::endl;
 
     std::shared_ptr<geometry::PointCloud> source_transformed_ptr(
         new geometry::PointCloud);
