@@ -1,0 +1,1 @@
+set PATH=D:\carlos\install\PCL 1.10.0\bin;D:\carlos\install\PCL 1.10.0\3rdParty\FLANN\bin;D:\carlos\install\PCL 1.10.0\3rdParty\VTK\bin;D:\carlos\install\PCL 1.10.0\3rdParty\Qhull\bin;D:\carlos\install\PCL 1.10.0\3rdParty\OpenNI2\Tools;%PATH%
